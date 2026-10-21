@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { DATABASE_NAME, migrateDatabase } from '@/data';
 import { setIdGenerator } from '@/domain';
 import { Gate } from '@/features/Gate';
-import { AppStateProvider, SettingsProvider } from '@/state';
+import { AppStateProvider, SettingsProvider, useBlurOnNavigate } from '@/state';
 import { Palette } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -43,6 +43,7 @@ export default function RootLayout() {
           <AppStateProvider>
             <StatusBar style="light" />
             <Gate>
+              <BlurOnNavigate />
               <Stack
                 screenOptions={{
                   headerTintColor: colors.accent,
@@ -72,4 +73,9 @@ export default function RootLayout() {
       </SQLiteProvider>
     </ThemeProvider>
   );
+}
+
+function BlurOnNavigate() {
+  useBlurOnNavigate();
+  return null;
 }
