@@ -64,8 +64,8 @@ Full details in [docs/INTEROPERABILITY.md](docs/INTEROPERABILITY.md); the record
 
 ## Try it
 
-- **Web preview:** https://ssvenkateshs.github.io/vbloom-goldledger/ (deployed from `main` by the *Deploy web preview* workflow). Data stays in your browser. The web build is a preview; phones are the real target.
-- **On your phone:** install Expo Go, then follow *Run it* below and scan the QR code.
+- **Web preview:** https://ssvenkateshs.github.io/vbloom-goldledger/ (deployed from `main` by the _Deploy web preview_ workflow). Data stays in your browser. The web build is a preview; phones are the real target.
+- **On your phone:** install Expo Go, then follow _Run it_ below and scan the QR code.
 
 ## Run it
 
