@@ -62,6 +62,11 @@ GoldLedger does not want to be the only program that can read your data.
 
 Full details in [docs/INTEROPERABILITY.md](docs/INTEROPERABILITY.md); the record shapes are in [docs/DATA-MODEL.md](docs/DATA-MODEL.md).
 
+## Try it
+
+- **Web preview:** https://ssvenkateshs.github.io/vbloom-goldledger/ (deployed from `main` by the *Deploy web preview* workflow). Data stays in your browser. The web build is a preview; phones are the real target.
+- **On your phone:** install Expo Go, then follow *Run it* below and scan the QR code.
+
 ## Run it
 
 ```bash
@@ -77,7 +82,7 @@ npm run typecheck       # tsc --noEmit
 npm test                # Jest: domain logic, pricing, formats, merge rules
 npm run schemas         # regenerate docs/schemas from the zod definitions
 npm run format          # Prettier
-npm run export:web      # static web build in dist/
+npm run export:web      # static web build in dist/ (served under /vbloom-goldledger, see app.json baseUrl)
 ```
 
 ## Layout
