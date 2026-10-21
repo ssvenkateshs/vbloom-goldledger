@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/rate.schema.json",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/rate.schema.json",
   "title": "Rate",
   "description": "A metal rate observation",
   "x-goldledger-version": "1.0.0",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/transaction.schema.json",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/transaction.schema.json",
   "title": "Transaction",
   "description": "A sale, purchase, exchange, repair, order or standalone payment",
   "x-goldledger-version": "1.0.0",

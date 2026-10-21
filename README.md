@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ssvenkateshs/goldledger/actions/workflows/ci.yml"><img src="https://github.com/ssvenkateshs/goldledger/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ssvenkateshs/vbloom-goldledger/actions/workflows/ci.yml"><img src="https://github.com/ssvenkateshs/vbloom-goldledger/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/Expo-SDK%2058-000?logo=expo" alt="Expo SDK 58">
   <img src="https://img.shields.io/badge/license-MIT-gold" alt="MIT">
 </p>

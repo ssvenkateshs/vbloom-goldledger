@@ -25,11 +25,7 @@ export default function TabsLayout() {
   return (
     <Tabs>
       <TabSlot />
-      <TabList
-        style={[
-          styles.bar,
-          { bottom: Math.max(insets.bottom, Spacing.md), backgroundColor: theme.surface, borderColor: theme.borderStrong },
-        ]}>
+      <TabList style={[styles.bar, { bottom: Math.max(insets.bottom, Spacing.md), backgroundColor: theme.surface, borderColor: theme.borderStrong }]}>
         {TABS.map((t) => (
           <TabTrigger key={t.name} name={t.name} href={t.href} asChild>
             <TabButton label={t.label} icon={t.icon} />
@@ -44,7 +40,11 @@ function TabButton({ label, icon, isFocused, ref: _ref, ...props }: TabTriggerSl
   const theme = useTheme();
   const color = isFocused ? Gold.bright : theme.textTertiary;
   return (
-    <Pressable {...props} accessibilityRole="tab" accessibilityState={{ selected: isFocused }} style={({ pressed }) => [styles.tab, pressed && { opacity: 0.7 }]}>
+    <Pressable
+      {...props}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: isFocused }}
+      style={({ pressed }) => [styles.tab, pressed && { opacity: 0.7 }]}>
       <Icon name={icon} size={22} color={color} />
       <AppText variant="caption" style={{ color, fontWeight: isFocused ? '700' : '500' }}>
         {label}

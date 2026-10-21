@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/goldledger-bundle.schema.json",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/goldledger-bundle.schema.json",
   "title": "GoldLedger bundle",
   "description": "A GoldLedger data bundle: a complete or partial snapshot of one shop",
   "x-goldledger-version": "1.0.0",

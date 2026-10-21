@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/goldledger-rates.schema.json",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/goldledger-rates.schema.json",
   "title": "GoldLedger rate feed",
   "description": "A published list of metal rates that devices can poll",
   "x-goldledger-version": "1.0.0",

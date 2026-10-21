@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/item.schema.json",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/item.schema.json",
   "title": "Item",
   "description": "A single piece of stock",
   "x-goldledger-version": "1.0.0",

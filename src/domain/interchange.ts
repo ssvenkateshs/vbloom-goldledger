@@ -32,7 +32,7 @@ import { fromMg, toMg, type WeightUnit } from './units';
 
 export const BUNDLE_FORMAT = 'goldledger.bundle';
 export const BUNDLE_SCHEMA_VERSION = '1.0.0';
-export const BUNDLE_SCHEMA_URL = 'https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/goldledger-bundle.schema.json';
+export const BUNDLE_SCHEMA_URL = 'https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/goldledger-bundle.schema.json';
 export const BUNDLE_MIME_TYPE = 'application/vnd.goldledger.bundle+json';
 export const BUNDLE_FILE_EXTENSION = '.goldledger.json';
 

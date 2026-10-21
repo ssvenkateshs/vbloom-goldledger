@@ -28,7 +28,7 @@ A JSON document, MIME type `application/vnd.goldledger.bundle+json`, file extens
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/goldledger-bundle.schema.json",
+  "$schema": "https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/goldledger-bundle.schema.json",
   "format": "goldledger.bundle",
   "schemaVersion": "1.0.0",
   "exportedAt": "2026-10-21T09:30:00.000Z",

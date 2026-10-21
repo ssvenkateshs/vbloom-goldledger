@@ -6,7 +6,7 @@ import { AppText, Button, Card, KeyValue, LogoMark, Screen } from '@/components'
 import { BUNDLE_SCHEMA_VERSION } from '@/domain';
 import { Gold, Spacing } from '@/theme';
 
-const REPO = 'https://github.com/ssvenkateshs/goldledger';
+const REPO = 'https://github.com/ssvenkateshs/vbloom-goldledger';
 
 export default function AboutScreen() {
   const version = Constants.expoConfig?.version ?? '1.0.0';

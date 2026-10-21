@@ -15,7 +15,7 @@ import { ItemSchema, PartySchema, RateSchema, SettingsSchema, TransactionSchema 
 const out = join(__dirname, '..', 'docs', 'schemas');
 mkdirSync(out, { recursive: true });
 
-const base = 'https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/';
+const base = 'https://raw.githubusercontent.com/ssvenkateshs/vbloom-goldledger/main/docs/schemas/';
 
 function emit(name: string, schema: z.ZodType, title: string, description: string) {
   const json = z.toJSONSchema(schema, { target: 'draft-2020-12', unrepresentable: 'any' }) as Record<string, unknown>;
