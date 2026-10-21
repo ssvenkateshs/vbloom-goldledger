@@ -28,6 +28,19 @@
 
 The visual language is deliberately quiet: near-black surfaces, ivory text and a single gold gradient reserved for the rate card, the primary action and the tab bar.
 
+## Screens
+
+<p>
+  <img src="docs/screenshots/onboarding.png" width="180" alt="Onboarding" />
+  <img src="docs/screenshots/shop-setup.png" width="180" alt="Shop setup" />
+  <img src="docs/screenshots/today.png" width="180" alt="Today" />
+  <img src="docs/screenshots/item.png" width="180" alt="Item priced at today's rate" />
+  <img src="docs/screenshots/rates.png" width="180" alt="Rates" />
+  <img src="docs/screenshots/transaction.png" width="180" alt="Sale with payment" />
+</p>
+
+_Captured from the web build in a 400 px viewport; native builds use the same components._
+
 ## Interoperable by design
 
 GoldLedger does not want to be the only program that can read your data.

@@ -66,7 +66,7 @@ export function RateChart({ points, formatValue, formatDate, height = 180 }: Rat
     const w = width - pad.left - pad.right;
     const h = height - pad.top - pad.bottom;
     const coords = visible.map((p, i) => ({
-      x: pad.left + ((xs[i] - minX) / spanX) * w,
+      x: visible.length === 1 ? pad.left + w / 2 : pad.left + ((xs[i] - minX) / spanX) * w,
       y: pad.top + h - ((ys[i] - minY) / spanY) * h,
     }));
     const line = coords.map((c, i) => `${i === 0 ? 'M' : 'L'} ${c.x.toFixed(1)} ${c.y.toFixed(1)}`).join(' ');

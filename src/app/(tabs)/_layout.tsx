@@ -14,23 +14,27 @@ const TABS: { name: string; href: '/' | '/stock' | '/ledger' | '/people' | '/mor
   { name: 'more', href: '/more', label: 'More', icon: 'dots-horizontal-circle' },
 ];
 
-/** Headless tabs with the gold-rimmed pill bar from the reference design, identical on every platform. */
+/**
+ * Headless tabs with the gold-rimmed pill bar from the reference design, identical on
+ * every platform. The TabList *is* the pill: expo-router only registers TabTriggers that
+ * are direct children of the TabList, so no wrapper views sit between them.
+ */
 export default function TabsLayout() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   return (
     <Tabs>
       <TabSlot />
-      <TabList asChild>
-        <View style={[styles.barWrap, { paddingBottom: Math.max(insets.bottom, Spacing.md) }]}>
-          <View style={[styles.bar, { backgroundColor: theme.surface, borderColor: theme.borderStrong }]}>
-            {TABS.map((t) => (
-              <TabTrigger key={t.name} name={t.name} href={t.href} asChild>
-                <TabButton label={t.label} icon={t.icon} />
-              </TabTrigger>
-            ))}
-          </View>
-        </View>
+      <TabList
+        style={[
+          styles.bar,
+          { bottom: Math.max(insets.bottom, Spacing.md), backgroundColor: theme.surface, borderColor: theme.borderStrong },
+        ]}>
+        {TABS.map((t) => (
+          <TabTrigger key={t.name} name={t.name} href={t.href} asChild>
+            <TabButton label={t.label} icon={t.icon} />
+          </TabTrigger>
+        ))}
       </TabList>
     </Tabs>
   );
@@ -40,11 +44,7 @@ function TabButton({ label, icon, isFocused, ref: _ref, ...props }: TabTriggerSl
   const theme = useTheme();
   const color = isFocused ? Gold.bright : theme.textTertiary;
   return (
-    <Pressable
-      {...props}
-      accessibilityRole="tab"
-      accessibilityState={{ selected: isFocused }}
-      style={({ pressed }) => [styles.tab, pressed && { opacity: 0.7 }]}>
+    <Pressable {...props} accessibilityRole="tab" accessibilityState={{ selected: isFocused }} style={({ pressed }) => [styles.tab, pressed && { opacity: 0.7 }]}>
       <Icon name={icon} size={22} color={color} />
       <AppText variant="caption" style={{ color, fontWeight: isFocused ? '700' : '500' }}>
         {label}
@@ -55,11 +55,12 @@ function TabButton({ label, icon, isFocused, ref: _ref, ...props }: TabTriggerSl
 }
 
 const styles = StyleSheet.create({
-  barWrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center', paddingHorizontal: Spacing.lg, pointerEvents: 'box-none' },
   bar: {
-    flexDirection: 'row',
-    width: '100%',
+    position: 'absolute',
+    left: Spacing.lg,
+    right: Spacing.lg,
     maxWidth: MaxContentWidth,
+    marginHorizontal: 'auto',
     height: TabBarHeight,
     borderRadius: Radius.xl,
     borderWidth: 1,
