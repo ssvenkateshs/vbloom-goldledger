@@ -1,0 +1,1075 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/goldledger-bundle.schema.json",
+  "title": "GoldLedger bundle",
+  "description": "A GoldLedger data bundle: a complete or partial snapshot of one shop",
+  "x-goldledger-version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string",
+      "const": "goldledger.bundle"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of this document format"
+    },
+    "exportedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "generator": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "deviceId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "shopName": {
+          "default": "My Jewellers",
+          "type": "string",
+          "maxLength": 120
+        },
+        "addressLines": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "phone": {
+          "default": "",
+          "type": "string",
+          "maxLength": 32
+        },
+        "taxId": {
+          "default": "",
+          "description": "GSTIN / VAT / TIN printed on invoices",
+          "type": "string",
+          "maxLength": 64
+        },
+        "currency": {
+          "default": "INR",
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217 alphabetic currency code"
+        },
+        "locale": {
+          "default": "en-IN",
+          "description": "BCP 47 language tag",
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 35
+        },
+        "weightUnit": {
+          "default": "g",
+          "type": "string",
+          "enum": [
+            "mg",
+            "g",
+            "kg",
+            "tola",
+            "ozt",
+            "ct",
+            "ratti"
+          ]
+        },
+        "taxPercent": {
+          "default": 3,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "taxLabel": {
+          "default": "GST",
+          "type": "string",
+          "maxLength": 40
+        },
+        "goldRateBasis": {
+          "default": "per_10g_22k",
+          "type": "string"
+        },
+        "silverRateBasis": {
+          "default": "per_kg_999",
+          "type": "string"
+        },
+        "defaultWastagePercent": {
+          "default": 0,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "invoicePrefix": {
+          "default": "INV",
+          "type": "string",
+          "maxLength": 10
+        },
+        "rateFeedUrl": {
+          "default": "",
+          "description": "Optional URL of a GoldLedger rate document",
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "shopName",
+        "addressLines",
+        "phone",
+        "taxId",
+        "currency",
+        "locale",
+        "weightUnit",
+        "taxPercent",
+        "taxLabel",
+        "goldRateBasis",
+        "silverRateBasis",
+        "defaultWastagePercent",
+        "invoicePrefix",
+        "rateFeedUrl"
+      ],
+      "additionalProperties": false,
+      "description": "Shop-level configuration"
+    },
+    "parties": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "RFC 4122 UUID"
+          },
+          "roles": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "customer",
+                "supplier",
+                "artisan"
+              ]
+            }
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "phone": {
+            "default": null,
+            "description": "Preferably E.164, e.g. +919876543210",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "email": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 254
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "address": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "taxId": {
+            "default": null,
+            "description": "GSTIN, VAT number or similar",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "idDocument": {
+            "default": null,
+            "description": "KYC reference, e.g. PAN or passport number",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notes": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tags": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "deletedAt": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                "description": "ISO 8601 timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "roles",
+          "name",
+          "phone",
+          "email",
+          "address",
+          "taxId",
+          "idDocument",
+          "notes",
+          "tags",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false,
+        "description": "A customer, supplier or artisan (karigar)"
+      }
+    },
+    "items": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "RFC 4122 UUID"
+          },
+          "sku": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "Shop-assigned stock code; printed on the tag"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ring",
+              "chain",
+              "necklace",
+              "bangle",
+              "bracelet",
+              "earring",
+              "pendant",
+              "anklet",
+              "nose_pin",
+              "mangalsutra",
+              "coin",
+              "bar",
+              "loose_stone",
+              "other"
+            ]
+          },
+          "metal": {
+            "type": "string",
+            "enum": [
+              "gold",
+              "silver",
+              "platinum",
+              "palladium"
+            ]
+          },
+          "fineness": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000,
+            "description": "Fineness in parts per thousand"
+          },
+          "grossWeightMg": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Weight in milligrams"
+          },
+          "netWeightMg": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Metal weight excluding stones"
+          },
+          "stoneWeightMg": {
+            "default": 0,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Weight in milligrams"
+          },
+          "hallmark": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "scheme": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32,
+                    "description": "e.g. BIS, LBMA, Assay Office"
+                  },
+                  "huid": {
+                    "default": null,
+                    "description": "Hallmark Unique ID (BIS: 6 alphanumeric)",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 32
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "centre": {
+                    "default": null,
+                    "description": "Assaying & hallmarking centre",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 120
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "date": {
+                    "default": null,
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "scheme",
+                  "huid",
+                  "centre",
+                  "date"
+                ],
+                "additionalProperties": false,
+                "description": "Hallmarking details"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wastagePercent": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "makingChargeType": {
+            "default": "per_gram",
+            "type": "string",
+            "enum": [
+              "per_gram",
+              "percent",
+              "flat"
+            ]
+          },
+          "makingChargeValue": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0
+          },
+          "stoneChargeMinor": {
+            "default": 0,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Amount in minor currency units (e.g. paise, cents)"
+          },
+          "costMinor": {
+            "default": null,
+            "description": "Landed cost, for margin reporting",
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "Amount in minor currency units (e.g. paise, cents)"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO 4217 alphabetic currency code"
+          },
+          "status": {
+            "default": "in_stock",
+            "type": "string",
+            "enum": [
+              "in_stock",
+              "reserved",
+              "sold",
+              "consigned",
+              "returned",
+              "scrapped"
+            ]
+          },
+          "supplierId": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "RFC 4122 UUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "location": {
+            "default": null,
+            "description": "Tray, safe, branch ...",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tags": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "deletedAt": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                "description": "ISO 8601 timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "sku",
+          "name",
+          "category",
+          "metal",
+          "fineness",
+          "grossWeightMg",
+          "netWeightMg",
+          "stoneWeightMg",
+          "hallmark",
+          "wastagePercent",
+          "makingChargeType",
+          "makingChargeValue",
+          "stoneChargeMinor",
+          "costMinor",
+          "currency",
+          "status",
+          "supplierId",
+          "location",
+          "description",
+          "tags",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false,
+        "description": "A single piece of stock"
+      }
+    },
+    "rates": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "RFC 4122 UUID"
+          },
+          "metal": {
+            "type": "string",
+            "enum": [
+              "gold",
+              "silver",
+              "platinum",
+              "palladium"
+            ]
+          },
+          "ratePerGramFineMinor": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Price of 1 g of 1000-fine metal, minor units"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO 4217 alphabetic currency code"
+          },
+          "source": {
+            "default": "manual",
+            "description": "\"manual\" or a provider identifier/URL",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          }
+        },
+        "required": [
+          "id",
+          "metal",
+          "ratePerGramFineMinor",
+          "currency",
+          "source",
+          "effectiveAt",
+          "createdAt"
+        ],
+        "additionalProperties": false,
+        "description": "A metal rate observation"
+      }
+    },
+    "transactions": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "RFC 4122 UUID"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "sale",
+              "purchase",
+              "exchange",
+              "repair",
+              "order",
+              "payment"
+            ]
+          },
+          "number": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "description": "Human-readable document number, unique per shop"
+          },
+          "status": {
+            "default": "final",
+            "type": "string",
+            "enum": [
+              "draft",
+              "final",
+              "void"
+            ]
+          },
+          "partyId": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "description": "RFC 4122 UUID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO 4217 alphabetic currency code"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "dueAt": {
+            "default": null,
+            "description": "Delivery date for orders, due date for credit",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                "description": "ISO 8601 timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lines": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                  "description": "RFC 4122 UUID"
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "out",
+                    "in"
+                  ]
+                },
+                "itemId": {
+                  "default": null,
+                  "description": "Stock item, when the line is a catalogued piece",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "RFC 4122 UUID"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                },
+                "metal": {
+                  "type": "string",
+                  "enum": [
+                    "gold",
+                    "silver",
+                    "platinum",
+                    "palladium"
+                  ]
+                },
+                "fineness": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000,
+                  "description": "Fineness in parts per thousand"
+                },
+                "grossWeightMg": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Weight in milligrams"
+                },
+                "netWeightMg": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Weight in milligrams"
+                },
+                "ratePerGramFineMinor": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "wastagePercent": {
+                  "default": 0,
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "makingChargeType": {
+                  "default": "flat",
+                  "type": "string",
+                  "enum": [
+                    "per_gram",
+                    "percent",
+                    "flat"
+                  ]
+                },
+                "makingChargeValue": {
+                  "default": 0,
+                  "type": "number",
+                  "minimum": 0
+                },
+                "stoneChargeMinor": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Amount in minor currency units (e.g. paise, cents)"
+                },
+                "otherChargeMinor": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Amount in minor currency units (e.g. paise, cents)"
+                },
+                "discountMinor": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Amount in minor currency units (e.g. paise, cents)"
+                },
+                "taxPercent": {
+                  "default": 0,
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "amountMinor": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Amount in minor currency units (e.g. paise, cents)"
+                },
+                "sortOrder": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "id",
+                "direction",
+                "itemId",
+                "description",
+                "metal",
+                "fineness",
+                "grossWeightMg",
+                "netWeightMg",
+                "ratePerGramFineMinor",
+                "wastagePercent",
+                "makingChargeType",
+                "makingChargeValue",
+                "stoneChargeMinor",
+                "otherChargeMinor",
+                "discountMinor",
+                "taxPercent",
+                "amountMinor",
+                "sortOrder"
+              ],
+              "additionalProperties": false,
+              "description": "One line of a transaction"
+            }
+          },
+          "payments": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                  "description": "RFC 4122 UUID"
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "in",
+                    "out"
+                  ]
+                },
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "cash",
+                    "upi",
+                    "card",
+                    "bank_transfer",
+                    "cheque",
+                    "wallet",
+                    "other"
+                  ]
+                },
+                "amountMinor": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Amount in minor currency units (e.g. paise, cents)"
+                },
+                "reference": {
+                  "default": null,
+                  "description": "UPI ref, cheque number ...",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 120
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "paidAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                  "description": "ISO 8601 timestamp"
+                },
+                "notes": {
+                  "default": null,
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 1000
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "direction",
+                "method",
+                "amountMinor",
+                "reference",
+                "paidAt",
+                "notes"
+              ],
+              "additionalProperties": false,
+              "description": "A payment attached to a transaction"
+            }
+          },
+          "totalMinor": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Amount in minor currency units (e.g. paise, cents)"
+          },
+          "notes": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+            "description": "ISO 8601 timestamp"
+          },
+          "deletedAt": {
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+                "description": "ISO 8601 timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "number",
+          "status",
+          "partyId",
+          "currency",
+          "issuedAt",
+          "dueAt",
+          "lines",
+          "payments",
+          "totalMinor",
+          "notes",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false,
+        "description": "A sale, purchase, exchange, repair, order or standalone payment"
+      }
+    }
+  },
+  "required": [
+    "format",
+    "schemaVersion",
+    "exportedAt",
+    "generator",
+    "parties",
+    "items",
+    "rates",
+    "transactions"
+  ],
+  "additionalProperties": false
+}

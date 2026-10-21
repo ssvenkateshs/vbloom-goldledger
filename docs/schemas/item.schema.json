@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/item.schema.json",
+  "title": "Item",
+  "description": "A single piece of stock",
+  "x-goldledger-version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+      "description": "RFC 4122 UUID"
+    },
+    "sku": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Shop-assigned stock code; printed on the tag"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ring",
+        "chain",
+        "necklace",
+        "bangle",
+        "bracelet",
+        "earring",
+        "pendant",
+        "anklet",
+        "nose_pin",
+        "mangalsutra",
+        "coin",
+        "bar",
+        "loose_stone",
+        "other"
+      ]
+    },
+    "metal": {
+      "type": "string",
+      "enum": [
+        "gold",
+        "silver",
+        "platinum",
+        "palladium"
+      ]
+    },
+    "fineness": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "Fineness in parts per thousand"
+    },
+    "grossWeightMg": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Weight in milligrams"
+    },
+    "netWeightMg": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Metal weight excluding stones"
+    },
+    "stoneWeightMg": {
+      "default": 0,
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Weight in milligrams"
+    },
+    "hallmark": {
+      "default": null,
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "scheme": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32,
+              "description": "e.g. BIS, LBMA, Assay Office"
+            },
+            "huid": {
+              "default": null,
+              "description": "Hallmark Unique ID (BIS: 6 alphanumeric)",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "centre": {
+              "default": null,
+              "description": "Assaying & hallmarking centre",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "date": {
+              "default": null,
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "scheme",
+            "huid",
+            "centre",
+            "date"
+          ],
+          "additionalProperties": false,
+          "description": "Hallmarking details"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "wastagePercent": {
+      "default": 0,
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "makingChargeType": {
+      "default": "per_gram",
+      "type": "string",
+      "enum": [
+        "per_gram",
+        "percent",
+        "flat"
+      ]
+    },
+    "makingChargeValue": {
+      "default": 0,
+      "type": "number",
+      "minimum": 0
+    },
+    "stoneChargeMinor": {
+      "default": 0,
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "Amount in minor currency units (e.g. paise, cents)"
+    },
+    "costMinor": {
+      "default": null,
+      "description": "Landed cost, for margin reporting",
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "description": "Amount in minor currency units (e.g. paise, cents)"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 alphabetic currency code"
+    },
+    "status": {
+      "default": "in_stock",
+      "type": "string",
+      "enum": [
+        "in_stock",
+        "reserved",
+        "sold",
+        "consigned",
+        "returned",
+        "scrapped"
+      ]
+    },
+    "supplierId": {
+      "default": null,
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+          "description": "RFC 4122 UUID"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "location": {
+      "default": null,
+      "description": "Tray, safe, branch ...",
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 120
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "description": {
+      "default": null,
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 4000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tags": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 40
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+      "description": "ISO 8601 timestamp"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+      "description": "ISO 8601 timestamp"
+    },
+    "deletedAt": {
+      "default": null,
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$",
+          "description": "ISO 8601 timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "sku",
+    "name",
+    "category",
+    "metal",
+    "fineness",
+    "grossWeightMg",
+    "netWeightMg",
+    "stoneWeightMg",
+    "hallmark",
+    "wastagePercent",
+    "makingChargeType",
+    "makingChargeValue",
+    "stoneChargeMinor",
+    "costMinor",
+    "currency",
+    "status",
+    "supplierId",
+    "location",
+    "description",
+    "tags",
+    "createdAt",
+    "updatedAt",
+    "deletedAt"
+  ],
+  "additionalProperties": false
+}

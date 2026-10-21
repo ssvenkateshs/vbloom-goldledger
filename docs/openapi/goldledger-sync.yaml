@@ -1,0 +1,220 @@
+openapi: 3.1.0
+info:
+  title: GoldLedger Sync API
+  version: 1.0.0
+  summary: Optional server-side synchronisation for GoldLedger devices.
+  description: |
+    GoldLedger works fully offline. This specification describes the HTTP API a
+    shop (or a hosting provider) can implement so that several devices share one
+    ledger. It reuses the interchange bundle: the request and response bodies are
+    the same JSON objects the app writes to a backup file, validated by the JSON
+    Schemas in `docs/schemas/`.
+
+    **Merge semantics** are identical to a bundle restore: records match by `id`;
+    the copy with the later `updatedAt` wins; a soft delete (`deletedAt` set)
+    wins a tie. Transactions are replaced whole, including lines and payments.
+    Rates are immutable observations keyed by `id`.
+
+    **Change feed.** `GET /changes?since=<cursor>` returns everything modified
+    after a cursor in a single bundle, plus the next cursor. Cursors are opaque
+    strings; a server may use a monotonic sequence number or an ISO timestamp.
+
+    **Authentication.** Bearer tokens (`Authorization: Bearer …`) scoped to one
+    shop. How tokens are issued is out of scope.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://{host}/goldledger/v1
+    variables:
+      host:
+        default: sync.example.com
+security:
+  - bearerAuth: []
+tags:
+  - name: Bundle
+    description: Whole-shop snapshot and merge
+  - name: Changes
+    description: Incremental synchronisation
+  - name: Rates
+    description: Published metal rates
+paths:
+  /bundle:
+    get:
+      tags: [Bundle]
+      summary: Download the complete shop as a bundle
+      operationId: getBundle
+      responses:
+        '200':
+          description: The current state of the shop.
+          content:
+            application/vnd.goldledger.bundle+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [Bundle]
+      summary: Merge a bundle into the shop
+      description: Applies last-writer-wins per record and returns what changed.
+      operationId: mergeBundle
+      requestBody:
+        required: true
+        content:
+          application/vnd.goldledger.bundle+json:
+            schema:
+              $ref: '#/components/schemas/Bundle'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bundle'
+      responses:
+        '200':
+          description: Merge summary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MergeSummary'
+        '400':
+          description: The body is not a valid bundle.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Bundle schema major version not supported by this server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /changes:
+    get:
+      tags: [Changes]
+      summary: Records changed since a cursor
+      operationId: getChanges
+      parameters:
+        - name: since
+          in: query
+          description: Cursor from a previous response. Omit for everything.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5000
+            default: 1000
+      responses:
+        '200':
+          description: A partial bundle with only changed records.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeSet'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [Changes]
+      summary: Push local changes
+      description: Semantically the same as `POST /bundle`, used by devices for incremental sync.
+      operationId: pushChanges
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bundle'
+      responses:
+        '200':
+          description: Merge summary and the cursor after this push.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/MergeSummary'
+                  - type: object
+                    properties:
+                      cursor:
+                        type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /rates:
+    get:
+      tags: [Rates]
+      summary: Current published rates
+      description: |
+        Returns a `goldledger.rates` document. This endpoint may also be served
+        as a static file; the app only needs the JSON body.
+      operationId: getRates
+      security: []
+      responses:
+        '200':
+          description: Rate feed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateFeed'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    Unauthorized:
+      description: Missing or invalid token.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Bundle:
+      $ref: ../schemas/goldledger-bundle.schema.json
+    RateFeed:
+      $ref: ../schemas/goldledger-rates.schema.json
+    Party:
+      $ref: ../schemas/party.schema.json
+    Item:
+      $ref: ../schemas/item.schema.json
+    Rate:
+      $ref: ../schemas/rate.schema.json
+    Transaction:
+      $ref: ../schemas/transaction.schema.json
+    ChangeSet:
+      allOf:
+        - $ref: '#/components/schemas/Bundle'
+        - type: object
+          required: [cursor, hasMore]
+          properties:
+            cursor:
+              type: string
+              description: Pass as `since` on the next call.
+            hasMore:
+              type: boolean
+    MergeSummary:
+      type: object
+      required: [parties, items, rates, transactions]
+      properties:
+        parties:
+          type: integer
+          description: Records applied
+        items:
+          type: integer
+        rates:
+          type: integer
+        transactions:
+          type: integer
+    Problem:
+      type: object
+      description: RFC 9457 problem details
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string

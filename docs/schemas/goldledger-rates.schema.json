@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/goldledger-rates.schema.json",
+  "title": "GoldLedger rate feed",
+  "description": "A published list of metal rates that devices can poll",
+  "x-goldledger-version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "format": {
+      "type": "string",
+      "const": "goldledger.rates"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "source": {
+      "type": "string"
+    },
+    "rates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metal": {
+            "type": "string",
+            "enum": [
+              "gold",
+              "silver",
+              "platinum",
+              "palladium"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO 4217 alphabetic currency code"
+          },
+          "ratePerGramFineMinor": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Price of 1 g of 1000-fine metal, minor units"
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          }
+        },
+        "required": [
+          "metal",
+          "currency",
+          "ratePerGramFineMinor",
+          "effectiveAt"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "format",
+    "schemaVersion",
+    "rates"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/ssvenkateshs/goldledger/main/docs/schemas/settings.schema.json",
+  "title": "Settings",
+  "description": "Shop-level configuration",
+  "x-goldledger-version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "shopName": {
+      "default": "My Jewellers",
+      "type": "string",
+      "maxLength": 120
+    },
+    "addressLines": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      }
+    },
+    "phone": {
+      "default": "",
+      "type": "string",
+      "maxLength": 32
+    },
+    "taxId": {
+      "default": "",
+      "description": "GSTIN / VAT / TIN printed on invoices",
+      "type": "string",
+      "maxLength": 64
+    },
+    "currency": {
+      "default": "INR",
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 alphabetic currency code"
+    },
+    "locale": {
+      "default": "en-IN",
+      "description": "BCP 47 language tag",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 35
+    },
+    "weightUnit": {
+      "default": "g",
+      "type": "string",
+      "enum": [
+        "mg",
+        "g",
+        "kg",
+        "tola",
+        "ozt",
+        "ct",
+        "ratti"
+      ]
+    },
+    "taxPercent": {
+      "default": 3,
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "taxLabel": {
+      "default": "GST",
+      "type": "string",
+      "maxLength": 40
+    },
+    "goldRateBasis": {
+      "default": "per_10g_22k",
+      "type": "string"
+    },
+    "silverRateBasis": {
+      "default": "per_kg_999",
+      "type": "string"
+    },
+    "defaultWastagePercent": {
+      "default": 0,
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "invoicePrefix": {
+      "default": "INV",
+      "type": "string",
+      "maxLength": 10
+    },
+    "rateFeedUrl": {
+      "default": "",
+      "description": "Optional URL of a GoldLedger rate document",
+      "type": "string",
+      "maxLength": 500
+    }
+  },
+  "required": [
+    "shopName",
+    "addressLines",
+    "phone",
+    "taxId",
+    "currency",
+    "locale",
+    "weightUnit",
+    "taxPercent",
+    "taxLabel",
+    "goldRateBasis",
+    "silverRateBasis",
+    "defaultWastagePercent",
+    "invoicePrefix",
+    "rateFeedUrl"
+  ],
+  "additionalProperties": false
+}
